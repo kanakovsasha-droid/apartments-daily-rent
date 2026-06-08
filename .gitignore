@@ -1,0 +1,18 @@
+# ОС
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы
+.vscode/
+.idea/
+*.swp
+*~
+
+# Зависимости (на случай будущих экспериментов)
+node_modules/
+
+# Логи и временные файлы
+*.log
+.cache/
+.tmp/

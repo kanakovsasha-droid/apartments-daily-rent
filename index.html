@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Посуточная аренда квартир</title>
+  <meta name="description" content="Посуточная аренда уютных квартир. Более 20 лет на рынке. Чисто, честно, без посредников.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Шапка -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="logo" id="brandLogo">Бренд</a>
+      <nav class="nav">
+        <a href="#apartments">Квартиры</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <a href="#" class="btn btn-sm btn-primary header-call" id="headerCall">Позвонить</a>
+    </div>
+  </header>
+
+  <!-- Герой -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <h1 id="heroTitle">Посуточная аренда квартир</h1>
+      <p class="hero-offer">Чистые, уютные квартиры в <span id="heroCity">городе</span> на любой срок — от одной ночи. Заселение в день обращения, без посредников и переплат.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-primary btn-lg" id="heroCall">📞 Позвонить</a>
+        <a href="#" class="btn btn-telegram btn-lg" id="heroTelegram" target="_blank" rel="noopener">✈ Написать в Telegram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Блок доверия -->
+  <section class="trust">
+    <div class="container">
+      <p class="trust-big">Более <span>20 лет</span> в посуточной аренде</p>
+      <p class="trust-sub">Тысячи довольных гостей. Знаем своё дело, ценим каждого гостя и отвечаем за качество.</p>
+      <div class="trust-points">
+        <div class="trust-point"><strong>Честные цены</strong><span>Без скрытых комиссий</span></div>
+        <div class="trust-point"><strong>Быстрое заселение</strong><span>Часто в день обращения</span></div>
+        <div class="trust-point"><strong>Чистота</strong><span>Уборка перед каждым гостем</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Квартиры -->
+  <section class="apartments" id="apartments">
+    <div class="container">
+      <h2 class="section-title">Наши квартиры</h2>
+      <p class="section-sub">Три квартиры на выбор — под отдых, командировку или семейную поездку.</p>
+      <div class="apartments-grid" id="apartmentsGrid">
+        <!-- карточки рендерятся в app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Отзывы -->
+  <section class="reviews" id="reviews">
+    <div class="container">
+      <h2 class="section-title">Отзывы гостей</h2>
+      <p class="section-sub">Что говорят те, кто уже останавливался у нас.</p>
+      <div class="reviews-grid" id="reviewsGrid">
+        <!-- отзывы рендерятся в app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты / футер -->
+  <footer class="site-footer" id="contacts">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <div class="footer-brand" id="footerBrand">Бренд</div>
+        <p class="footer-tag">Посуточная аренда квартир с заботой о госте.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Контакты</h3>
+        <p><a href="#" id="footerPhone">+7 000 000-00-00</a></p>
+        <p><a href="#" id="footerTelegram" target="_blank" rel="noopener">Telegram</a></p>
+      </div>
+      <div class="footer-col">
+        <h3>Где мы</h3>
+        <p id="footerCity">Город</p>
+        <p class="footer-muted">Отвечаем ежедневно с 9:00 до 22:00, обычно в течение 15 минут.</p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span id="footerCopy">© Бренд</span>
+    </div>
+  </footer>
+
+  <!-- Плавающая подсказка по клику на свободную дату -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

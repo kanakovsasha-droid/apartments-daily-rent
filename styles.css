@@ -1,0 +1,442 @@
+/* ===== Базовые переменные и сброс ===== */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --bg-soft-2: #eef1f5;
+  --text: #1c2530;
+  --text-muted: #5b6776;
+  --border: #e3e8ee;
+  --brand: #2f6f5e;          /* спокойный тёмно-зелёный */
+  --brand-dark: #245546;
+  --brand-soft: #e7f1ee;
+  --telegram: #2aabee;
+  --accent: #c89b3c;
+  --shadow: 0 4px 20px rgba(28, 37, 48, 0.08);
+  --shadow-lg: 0 12px 40px rgba(28, 37, 48, 0.12);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --maxw: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===== Кнопки ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .18s ease, background .18s ease;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn-lg { padding: 15px 28px; font-size: 16px; }
+.btn-sm { padding: 9px 16px; font-size: 14px; }
+
+.btn-primary { background: var(--brand); color: #fff; box-shadow: 0 6px 18px rgba(47,111,94,.28); }
+.btn-primary:hover { background: var(--brand-dark); }
+
+.btn-telegram { background: var(--telegram); color: #fff; box-shadow: 0 6px 18px rgba(42,171,238,.28); }
+.btn-telegram:hover { filter: brightness(.95); }
+
+.btn-outline { background: #fff; color: var(--brand); border: 1.5px solid var(--brand); }
+.btn-outline:hover { background: var(--brand-soft); }
+
+.btn-ghost { background: var(--bg-soft); color: var(--text); }
+.btn-ghost:hover { background: var(--bg-soft-2); }
+
+.btn-block { width: 100%; }
+
+/* ===== Шапка ===== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 64px;
+}
+.logo { font-weight: 800; font-size: 20px; color: var(--brand); letter-spacing: -.3px; }
+.nav { display: flex; gap: 24px; margin-left: auto; }
+.nav a { color: var(--text-muted); font-weight: 500; font-size: 15px; }
+.nav a:hover { color: var(--text); }
+.header-call { margin-left: 8px; }
+
+/* ===== Герой ===== */
+.hero {
+  background:
+    radial-gradient(1200px 500px at 70% -10%, var(--brand-soft), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+  padding: 72px 0 64px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: clamp(30px, 6vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -1px;
+  margin: 0 0 18px;
+  font-weight: 800;
+}
+.hero-offer {
+  max-width: 640px;
+  margin: 0 auto 30px;
+  font-size: clamp(16px, 2.4vw, 19px);
+  color: var(--text-muted);
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ===== Доверие ===== */
+.trust {
+  background: var(--brand);
+  color: #fff;
+  text-align: center;
+  padding: 56px 0;
+}
+.trust-big {
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 800;
+  margin: 0 0 10px;
+  letter-spacing: -.5px;
+}
+.trust-big span { color: #ffe39a; }
+.trust-sub {
+  max-width: 560px;
+  margin: 0 auto 34px;
+  color: rgba(255,255,255,.82);
+  font-size: 16px;
+}
+.trust-points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.trust-point {
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: var(--radius-sm);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.trust-point strong { font-size: 17px; }
+.trust-point span { color: rgba(255,255,255,.78); font-size: 14px; }
+
+/* ===== Секции ===== */
+section { scroll-margin-top: 72px; }
+.apartments { padding: 72px 0; }
+.section-title {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 8px;
+  letter-spacing: -.5px;
+}
+.section-sub {
+  text-align: center;
+  color: var(--text-muted);
+  margin: 0 auto 44px;
+  max-width: 560px;
+}
+
+/* ===== Карточки квартир ===== */
+.apartments-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+.apt-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* Галерея */
+.apt-gallery { position: relative; background: var(--bg-soft-2); }
+.apt-gallery-main {
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #dfe6ec, #eef1f5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #93a1b0;
+  font-size: 15px;
+  font-weight: 500;
+}
+.apt-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.85);
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow);
+}
+.gallery-nav:hover { background: #fff; }
+.gallery-prev { left: 12px; }
+.gallery-next { right: 12px; }
+.gallery-dots {
+  position: absolute;
+  bottom: 12px; left: 0; right: 0;
+  display: flex; gap: 6px; justify-content: center;
+}
+.gallery-dots span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,.6);
+}
+.gallery-dots span.active { background: #fff; width: 18px; border-radius: 4px; }
+
+.apt-body { padding: 22px; }
+.apt-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.apt-title { font-size: 21px; font-weight: 700; margin: 0; }
+.apt-price { font-size: 20px; font-weight: 800; color: var(--brand); white-space: nowrap; }
+.apt-price small { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.apt-desc { color: var(--text-muted); margin: 12px 0 16px; font-size: 15px; }
+
+.apt-amenities { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.amenity {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.apt-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.apt-actions .btn { flex: 1 1 auto; }
+
+/* Календарь */
+.apt-calendar { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 20px; }
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.cal-title { font-weight: 700; font-size: 16px; }
+.cal-nav { display: flex; gap: 8px; }
+.cal-nav button {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+.cal-nav button:hover { background: var(--bg-soft); }
+.cal-month {
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.apt-calendar { transition: background .4s ease, box-shadow .4s ease; border-radius: var(--radius-sm); }
+.apt-calendar.flash { background: var(--brand-soft); box-shadow: 0 0 0 6px var(--brand-soft); }
+.cal-dow {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+.cal-cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.cal-cell.empty { background: transparent; }
+.cal-cell.free {
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+  cursor: pointer;
+  border-color: transparent;
+}
+.cal-cell.free:hover { background: #d4e8e2; }
+.cal-cell.busy {
+  background: var(--bg-soft-2);
+  color: #aab4c0;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+.cal-cell.past {
+  color: #c4ccd6;
+  cursor: default;
+}
+.cal-cell.today { box-shadow: inset 0 0 0 2px var(--brand); }
+.cal-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.cal-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.cal-legend i {
+  width: 14px; height: 14px; border-radius: 4px; display: inline-block;
+}
+.dot-free { background: var(--brand-soft); border: 1px solid #cfe4dd; }
+.dot-busy { background: var(--bg-soft-2); }
+
+/* ===== Отзывы ===== */
+.reviews { background: var(--bg-soft); padding: 72px 0; }
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.review-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.review-stars { color: var(--accent); font-size: 16px; letter-spacing: 2px; margin-bottom: 10px; }
+.review-text { color: var(--text); font-size: 15px; margin: 0 0 16px; }
+.review-author { display: flex; align-items: center; gap: 12px; }
+.review-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.review-name { font-weight: 600; }
+
+/* ===== Футер ===== */
+.site-footer {
+  background: #11181f;
+  color: #c7d0da;
+  padding: 56px 0 24px;
+}
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 32px;
+}
+.footer-brand { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.footer-tag { color: #8d99a6; margin: 0; max-width: 280px; }
+.footer-col h3 { font-size: 15px; color: #fff; margin: 0 0 14px; }
+.footer-col p { margin: 0 0 10px; }
+.footer-col a { color: #c7d0da; }
+.footer-col a:hover { color: #fff; }
+.footer-muted { color: #8d99a6; font-size: 14px; }
+.footer-bottom {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: #8d99a6;
+  font-size: 14px;
+}
+
+/* ===== Тост-подсказка ===== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(40px);
+  background: var(--text);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 100;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== Адаптив ===== */
+@media (min-width: 760px) {
+  .apartments-grid { gap: 36px; }
+  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1000px) {
+  .reviews-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .nav { display: none; }
+  .trust-points { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  .hero { padding: 52px 0 48px; }
+  .apartments, .reviews { padding: 52px 0; }
+  .apt-actions .btn { flex: 1 1 100%; }
+}
