@@ -2,8 +2,8 @@
    КОНФИГУРАЦИЯ — правьте эти значения под себя
    ========================================================================= */
 const BRAND_NAME = "Уютные квартиры";      // название бизнеса
-const CITY = "Москва";                      // город / район
-const PHONE = "+7 900 000-00-00";          // телефон (для кнопки «Позвонить»)
+const CITY = "Севастополь";                 // город / район
+const PHONE = "+7 978 700-29-19";          // телефон (для кнопки «Позвонить»)
 const TELEGRAM_USERNAME = "your_username";  // username в Telegram без @ (для ссылки t.me)
 
 /* Готовые ссылки на основе конфига */
@@ -76,7 +76,6 @@ function showToast(message) {
 function applyConfig() {
   document.title = `${BRAND_NAME} — посуточная аренда квартир в ${CITY}`;
   setText("brandLogo", BRAND_NAME);
-  setText("heroCity", CITY);
   setText("footerBrand", BRAND_NAME);
   setText("footerCity", CITY);
   setText("footerCopy", `© ${new Date().getFullYear()} ${BRAND_NAME}`);
@@ -253,6 +252,30 @@ async function initCalendar(apartmentId) {
 }
 
 /* =========================================================================
+   ЧТО РЯДОМ / ДОСТОПРИМЕЧАТЕЛЬНОСТИ
+   ========================================================================= */
+async function renderLandmarks() {
+  const res = await fetch("data/landmarks.json");
+  const landmarks = await res.json();
+  const grid = document.getElementById("landmarksGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  for (const l of landmarks) {
+    const card = document.createElement("article");
+    card.className = "landmark-card";
+    card.innerHTML = `
+      <img src="${escapeHtml(l.photo)}" alt="${escapeHtml(l.title)}" loading="lazy">
+      ${l.credit ? `<span class="landmark-credit">${escapeHtml(l.credit)}</span>` : ""}
+      <div class="landmark-overlay">
+        <h3 class="landmark-title">${escapeHtml(l.title)}</h3>
+        <p class="landmark-desc">${escapeHtml(l.description)}</p>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+/* =========================================================================
    ОТЗЫВЫ
    ========================================================================= */
 async function renderReviews() {
@@ -295,6 +318,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   applyConfig();
   try {
     await renderApartments();
+    await renderLandmarks();
     await renderReviews();
   } catch (e) {
     console.error("Ошибка загрузки данных:", e);

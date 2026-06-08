@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Памятник затопленным кораблям",
+    "photo": "assets/landmarks/sunken-ships.jpg",
+    "description": "Главный символ Севастополя на Приморском бульваре — в нескольких минутах от центра.",
+    "credit": "Wikimedia Commons · Public domain"
+  },
+  {
+    "title": "Приморский бульвар",
+    "photo": "assets/landmarks/primorsky-boulevard.jpg",
+    "description": "Любимое место прогулок у самой воды: набережная, фонтаны и виды на бухту.",
+    "credit": "Leon petrosyan · CC BY-SA 4.0"
+  },
+  {
+    "title": "Площадь Нахимова",
+    "photo": "assets/landmarks/nakhimov-square.jpg",
+    "description": "Сердце города рядом с Графской пристанью — отсюда удобно начинать знакомство с Севастополем.",
+    "credit": "Pavlo1 · CC BY-SA 4.0"
+  },
+  {
+    "title": "Херсонес Таврический",
+    "photo": "assets/landmarks/chersonesus.jpg",
+    "description": "Древний город-музей под открытым небом с античными колоннами у моря.",
+    "credit": "A.Savin · CC BY-SA 3.0"
+  },
+  {
+    "title": "Владимирский собор",
+    "photo": "assets/landmarks/vladimir-cathedral.jpg",
+    "description": "Усыпальница адмиралов — величественный храм в историческом центре города.",
+    "credit": "A.Savin · CC BY-SA 3.0"
+  },
+  {
+    "title": "Театр имени Луначарского",
+    "photo": "assets/landmarks/lunacharsky-theatre.jpg",
+    "description": "Главный драматический театр Севастополя — красивое здание в самом центре.",
+    "credit": "Alexxx1979 · CC BY-SA 4.0"
+  }
+]
