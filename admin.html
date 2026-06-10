@@ -63,8 +63,9 @@
     /* статус */
     #status { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120%);
       background: var(--text); color: #fff; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600;
-      box-shadow: var(--shadow-lg); transition: transform .25s ease; z-index: 50; max-width: 90vw; }
-    #status.show { transform: translateX(-50%) translateY(0); }
+      box-shadow: var(--shadow-lg); transition: transform .25s ease, opacity .25s ease; z-index: 50; max-width: 90vw;
+      opacity: 0; visibility: hidden; pointer-events: none; }
+    #status.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
     #status.err { background: #b23b3b; }
     #status.ok { background: var(--brand); }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
