@@ -18,8 +18,8 @@
       "Парковка во дворе"
     ],
     "photos": [
-      "assets/apartments/morskaya/01.jpg",
       "assets/apartments/morskaya/02.jpg",
+      "assets/apartments/morskaya/01.jpg",
       "assets/apartments/morskaya/03.jpg",
       "assets/apartments/morskaya/04.jpg",
       "assets/apartments/morskaya/05.jpg",
@@ -84,6 +84,7 @@
       "Парковка"
     ],
     "photos": [
+      "assets/apartments/mokrousova/09.jpg",
       "assets/apartments/mokrousova/01.jpg",
       "assets/apartments/mokrousova/02.jpg",
       "assets/apartments/mokrousova/03.jpg",
@@ -92,7 +93,6 @@
       "assets/apartments/mokrousova/06.jpg",
       "assets/apartments/mokrousova/07.jpg",
       "assets/apartments/mokrousova/08.jpg",
-      "assets/apartments/mokrousova/09.jpg",
       "assets/apartments/mokrousova/10.jpg",
       "assets/apartments/mokrousova/11.jpg",
       "assets/apartments/mokrousova/12.jpg",
