@@ -1,39 +1,5 @@
 [
   {
-    "id": "morskaya",
-    "title": "Большая Морская 44. (Центр) ",
-    "pricePerNight": 3000,
-    "description": "Просторная двухкомнатная квартира в самом центре Севастополя — благодаря большой утеплённой веранде она практически трёхкомнатная. Три двуспальные кровати и раскладной диван: разместим большую семью или до 4 командировочных, каждому отдельное спальное место. Огромный балкон, во дворе палисадник из роз, закрытая территория и своё парковочное место. Рядом рынок Чайка, Исторический бульвар (5 мин), пляжи Хрустальный и Скалки (10 мин), Херсонес (6 мин на маршрутке). Дети приветствуются.\n",
-    "amenities": [
-      "Wi-Fi",
-      "Две комнаты + веранда",
-      "3 двуспальные кровати",
-      "Раскладной диван",
-      "Стиральная машина",
-      "Микроволновка",
-      "ТВ в каждой комнате",
-      "Газовая колонка",
-      "Большой балкон",
-      "Закрытая территория",
-      "Парковка во дворе."
-    ],
-    "photos": [
-      "assets/apartments/morskaya/02.jpg",
-      "assets/apartments/morskaya/01.jpg",
-      "assets/apartments/morskaya/03.jpg",
-      "assets/apartments/morskaya/04.jpg",
-      "assets/apartments/morskaya/05.jpg",
-      "assets/apartments/morskaya/06.jpg",
-      "assets/apartments/morskaya/07.jpg",
-      "assets/apartments/morskaya/08.jpg",
-      "assets/apartments/morskaya/09.jpg",
-      "assets/apartments/morskaya/10.jpg",
-      "assets/apartments/morskaya/11.jpg",
-      "assets/apartments/morskaya/12.jpg",
-      "assets/apartments/morskaya/13.jpg"
-    ]
-  },
-  {
     "id": "lenina",
     "title": "Ленина 33. (Центр)",
     "pricePerNight": 3000,
@@ -63,7 +29,8 @@
       "assets/apartments/lenina/09.jpg",
       "assets/apartments/lenina/10.jpg",
       "assets/apartments/lenina/11.jpg"
-    ]
+    ],
+    "oldPrice": 4500
   },
   {
     "id": "mokrousova",
@@ -106,6 +73,42 @@
       "assets/apartments/mokrousova/20.jpg",
       "assets/apartments/mokrousova/21.jpg",
       "assets/apartments/mokrousova/22.jpg"
-    ]
+    ],
+    "oldPrice": 4000
+  },
+  {
+    "id": "morskaya",
+    "title": "Большая Морская 44. (Центр) ",
+    "pricePerNight": 3000,
+    "description": "Просторная двухкомнатная квартира в самом центре Севастополя — благодаря большой утеплённой веранде она практически трёхкомнатная. Три двуспальные кровати и раскладной диван: разместим большую семью или до 4 командировочных, каждому отдельное спальное место. Огромный балкон, во дворе палисадник из роз, закрытая территория и своё парковочное место. Рядом рынок Чайка, Исторический бульвар (5 мин), пляжи Хрустальный и Скалки (10 мин), Херсонес (6 мин на маршрутке). Дети приветствуются.\n",
+    "amenities": [
+      "Wi-Fi",
+      "Две комнаты + веранда",
+      "3 двуспальные кровати",
+      "Раскладной диван",
+      "Стиральная машина",
+      "Микроволновка",
+      "ТВ в каждой комнате",
+      "Газовая колонка",
+      "Большой балкон",
+      "Закрытая территория",
+      "Парковка во дворе."
+    ],
+    "photos": [
+      "assets/apartments/morskaya/02.jpg",
+      "assets/apartments/morskaya/01.jpg",
+      "assets/apartments/morskaya/03.jpg",
+      "assets/apartments/morskaya/04.jpg",
+      "assets/apartments/morskaya/05.jpg",
+      "assets/apartments/morskaya/06.jpg",
+      "assets/apartments/morskaya/07.jpg",
+      "assets/apartments/morskaya/08.jpg",
+      "assets/apartments/morskaya/09.jpg",
+      "assets/apartments/morskaya/10.jpg",
+      "assets/apartments/morskaya/11.jpg",
+      "assets/apartments/morskaya/12.jpg",
+      "assets/apartments/morskaya/13.jpg"
+    ],
+    "oldPrice": 3500
   }
 ]
