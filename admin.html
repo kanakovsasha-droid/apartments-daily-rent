@@ -55,6 +55,17 @@
     #status.ok { background: var(--brand); }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
     code.kbd { background: var(--bg-soft-2); padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+    /* фото */
+    .photos { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .thumb { position: relative; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-soft); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb button { position: absolute; background: rgba(20,28,38,.72); color: #fff; border: none; cursor: pointer; line-height: 1; }
+    .thumb .x { top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; font-size: 13px; }
+    .thumb .mv { bottom: 3px; width: 20px; height: 20px; border-radius: 5px; font-size: 13px; }
+    .thumb .mv.l { left: 3px; } .thumb .mv.r { right: 3px; }
+    .thumb.cover::after { content: "обложка"; position: absolute; left: 0; right: 0; bottom: 0; background: var(--brand); color: #fff; font-size: 9px; font-weight: 700; text-align: center; padding: 1px 0; }
+    .photo-add { cursor: pointer; }
+    .photo-add input { display: none; }
   </style>
 </head>
 <body>
@@ -282,10 +293,83 @@ function renderApts() {
         <label>Удобства (через запятую)</label>
         <input data-idx="${idx}" data-f="amenities" value="${escapeHtml(apt.amenities.join(", "))}">
       </div>
-      <p class="hint">📸 Фото: ${apt.photos.length} шт. (управляются через файлы, не здесь)</p>
+      <div class="field">
+        <label>Фотографии (первая — обложка)</label>
+        <div class="photos" id="photos-${idx}"></div>
+        <label class="btn btn-ghost photo-add">
+          + Добавить фото
+          <input type="file" accept="image/*" multiple onchange="addPhotos(${idx}, this.files); this.value=''">
+        </label>
+        <p class="hint">После добавления/удаления нажмите «Сохранить квартиры и цены», чтобы обновить сайт.</p>
+      </div>
     `;
     box.appendChild(card);
+    renderPhotos(idx);
   });
+}
+
+/* ===================== ФОТО ===================== */
+const previewCache = {};   // path -> dataURL для только что загруженных фото
+
+function renderPhotos(idx) {
+  const apt = apartments[idx];
+  const box = document.getElementById("photos-" + idx);
+  box.innerHTML = apt.photos.map((p, i) => `
+    <div class="thumb ${i === 0 ? "cover" : ""}">
+      <img src="${escapeHtml(previewCache[p] || p)}" alt="">
+      <button class="x" title="Удалить" onclick="removePhoto(${idx}, ${i})">×</button>
+      ${i > 0 ? `<button class="mv l" title="Левее" onclick="movePhoto(${idx}, ${i}, -1)">‹</button>` : ""}
+      ${i < apt.photos.length - 1 ? `<button class="mv r" title="Правее" onclick="movePhoto(${idx}, ${i}, 1)">›</button>` : ""}
+    </div>`).join("");
+}
+
+function removePhoto(idx, i) { apartments[idx].photos.splice(i, 1); renderPhotos(idx); }
+function movePhoto(idx, i, dir) {
+  const a = apartments[idx].photos, j = i + dir;
+  if (j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]];
+  renderPhotos(idx);
+}
+
+function readFileDataUrl(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result); r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function ghPutRaw(path, b64content, message) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: { "Authorization": "Bearer " + getToken(), "Accept": "application/vnd.github+json" },
+    body: JSON.stringify({ message, content: b64content, branch: BRANCH })
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(res.status + " " + t.slice(0, 120)); }
+}
+
+async function addPhotos(idx, files) {
+  if (!files || !files.length) return;
+  const apt = apartments[idx];
+  let done = 0;
+  try {
+    for (const file of files) {
+      done++;
+      setStatus(`Загружаю фото ${done} из ${files.length}…`);
+      const dataUrl = await readFileDataUrl(file);
+      const b64 = dataUrl.split(",")[1];
+      let ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      const path = `assets/apartments/${apt.id}/up_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+      await ghPutRaw(path, b64, "admin: загрузка фото");
+      previewCache[path] = dataUrl;
+      apt.photos.push(path);
+      renderPhotos(idx);
+    }
+    setStatus("Фото загружены ✓ Нажмите «Сохранить квартиры и цены»", "ok", 7000);
+  } catch (e) {
+    setStatus("Ошибка загрузки фото: " + e.message, "err", 8000);
+  }
 }
 
 function collectApts() {
