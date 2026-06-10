@@ -39,11 +39,12 @@
     /* календарь */
     .cal-aptname { font-weight: 700; margin: 0 0 4px; }
     .cal-months { display: flex; gap: 18px; flex-wrap: wrap; }
-    .cal-block { flex: 1; min-width: 240px; }
+    .cal-block { flex: 1; min-width: 240px; margin-bottom: 8px; }
     .cal-mtitle { font-weight: 700; font-size: 14px; margin: 6px 0 8px; text-align: center; }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     .cal-dow { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 2px 0; }
-    .cal-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); user-select: none; }
+    /* фикс. высота вместо aspect-ratio — иначе Safari на iPhone схлопывает высоту и месяцы наезжают */
+    .cal-cell { height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); user-select: none; }
     .cal-cell.empty { border: none; cursor: default; }
     .cal-cell.past { color: #c2c9d2; background: var(--bg-soft); cursor: default; border-color: transparent; }
     .cal-cell.free { background: #eaf6f1; color: var(--brand-dark); }
@@ -86,14 +87,16 @@
       .admin-top h1 { font-size: 19px; }
       .tabs { flex-wrap: wrap; }
       .tab { padding: 9px 14px; font-size: 13px; }
-      .cal-months { flex-direction: column; gap: 10px; }
-      .cal-block { min-width: 0; }
+      .cal-months { display: block; }
+      .cal-block { min-width: 0; margin-bottom: 18px; }
+      .cal-block:last-child { margin-bottom: 0; }
       .cal-range-title { min-width: 0; font-size: 13px; }
+      .cal-grid { gap: 5px; }
+      .cal-cell { height: 42px; font-size: 15px; }   /* крупнее палец */
       .range-row { gap: 8px; }
       .range-row label { flex: 1 1 100%; }
-      .range-row input[type=date] { flex: 1; }
+      .range-row input[type=date] { flex: 1; min-height: 40px; }
       .range-btn { flex: 1; }
-      .cal-cell { font-size: 15px; }   /* крупнее палец */
       .thumb { width: 72px; height: 72px; }
     }
   </style>
