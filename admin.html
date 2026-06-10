@@ -43,6 +43,14 @@
     .cal-cell.past { color: #c2c9d2; background: var(--bg-soft); cursor: default; border-color: transparent; }
     .cal-cell.free { background: #eaf6f1; color: var(--brand-dark); }
     .cal-cell.busy { background: #fbe4e4; color: #b23b3b; font-weight: 700; }
+    .range-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px; }
+    .range-row label { font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .range-row input[type=date] { padding: 9px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); font: inherit; }
+    .range-btn { padding: 9px 18px; font-size: 14px; }
+    .cal-nav-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 10px; }
+    .cal-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); font-size: 20px; cursor: pointer; color: var(--brand-dark); line-height: 1; }
+    .cal-arrow:hover { background: var(--brand-soft); }
+    .cal-range-title { font-weight: 700; font-size: 14px; min-width: 200px; text-align: center; }
     .cal-legend { font-size: 12px; color: var(--text-muted); margin-top: 10px; display: flex; gap: 16px; }
     .cal-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
     .lg-free { background: #eaf6f1; } .lg-busy { background: #fbe4e4; }
@@ -66,6 +74,23 @@
     .thumb.cover::after { content: "обложка"; position: absolute; left: 0; right: 0; bottom: 0; background: var(--brand); color: #fff; font-size: 9px; font-weight: 700; text-align: center; padding: 1px 0; }
     .photo-add { cursor: pointer; }
     .photo-add input { display: none; }
+    /* ===== мобильная адаптация ===== */
+    @media (max-width: 620px) {
+      .admin-wrap { padding: 16px 12px 56px; }
+      .admin-card { padding: 16px; }
+      .admin-top h1 { font-size: 19px; }
+      .tabs { flex-wrap: wrap; }
+      .tab { padding: 9px 14px; font-size: 13px; }
+      .cal-months { flex-direction: column; gap: 10px; }
+      .cal-block { min-width: 0; }
+      .cal-range-title { min-width: 0; font-size: 13px; }
+      .range-row { gap: 8px; }
+      .range-row label { flex: 1 1 100%; }
+      .range-row input[type=date] { flex: 1; }
+      .range-btn { flex: 1; }
+      .cal-cell { font-size: 15px; }   /* крупнее палец */
+      .thumb { width: 72px; height: 72px; }
+    }
   </style>
 </head>
 <body>
@@ -125,8 +150,10 @@
       <div id="tab-busy" class="hidden">
         <div class="admin-card">
           <p class="hint" style="margin-top:0">
-            Нажимайте на дни, чтобы переключать <b style="color:#b23b3b">занято</b> ⇄ <b style="color:var(--brand-dark)">свободно</b>.
-            Прошедшие даты менять нельзя.
+            <b>Способ 1 — диапазон:</b> укажите даты «с… по…» и нажмите «Занять» или «Освободить» (удобно для брони на несколько дней).<br>
+            <b>Способ 2 — по дню:</b> нажимайте на отдельные дни в календаре, чтобы переключать
+            <b style="color:#b23b3b">занято</b> ⇄ <b style="color:var(--brand-dark)">свободно</b>.<br>
+            Стрелками ‹ › листайте месяцы вперёд. Прошедшие даты менять нельзя.
           </p>
           <div class="cal-legend">
             <span><i class="lg-free"></i>Свободно</span>
@@ -399,25 +426,56 @@ const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 function pad(n){ return String(n).padStart(2,"0"); }
 function fmt(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 
+const calView = {};   // aptId -> {year, month} — какой месяц сейчас показан (левый из двух)
+
+function todayMidnight() { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+
 function renderBusy() {
   const box = document.getElementById("busyForms");
   box.innerHTML = "";
+  const todayStr = fmt(todayMidnight());
   apartments.forEach(apt => {
     const card = document.createElement("div");
     card.className = "admin-card";
-    card.innerHTML = `<p class="cal-aptname">${escapeHtml(apt.title)}</p><div class="cal-months" id="cal-${apt.id}"></div>`;
+    card.innerHTML = `
+      <p class="cal-aptname">${escapeHtml(apt.title)}</p>
+      <div class="range-row">
+        <label>с <input type="date" id="from-${apt.id}" min="${todayStr}"></label>
+        <label>по <input type="date" id="to-${apt.id}" min="${todayStr}"></label>
+        <button class="btn btn-primary range-btn" onclick="markRange('${apt.id}', true)">Занять</button>
+        <button class="btn btn-ghost range-btn" onclick="markRange('${apt.id}', false)">Освободить</button>
+      </div>
+      <div class="cal-nav-row">
+        <button class="cal-arrow" onclick="shiftMonth('${apt.id}', -1)" aria-label="Назад">‹</button>
+        <span class="cal-range-title" id="caltitle-${apt.id}"></span>
+        <button class="cal-arrow" onclick="shiftMonth('${apt.id}', 1)" aria-label="Вперёд">›</button>
+      </div>
+      <div class="cal-months" id="cal-${apt.id}"></div>`;
     box.appendChild(card);
+    if (!calView[apt.id]) { const n = new Date(); calView[apt.id] = { year: n.getFullYear(), month: n.getMonth() }; }
     drawMonths(apt.id);
   });
+}
+
+function shiftMonth(aptId, delta) {
+  const v = calView[aptId];
+  const now = new Date();
+  let y = v.year, m = v.month + delta;
+  if (m < 0) { m = 11; y--; } else if (m > 11) { m = 0; y++; }
+  // не листаем раньше текущего месяца
+  if (y < now.getFullYear() || (y === now.getFullYear() && m < now.getMonth())) return;
+  calView[aptId] = { year: y, month: m };
+  drawMonths(aptId);
 }
 
 function drawMonths(aptId) {
   const host = document.getElementById("cal-" + aptId);
   host.innerHTML = "";
-  const now = new Date();
-  const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  for (let m = 0; m < 3; m++) {
-    const base = new Date(now.getFullYear(), now.getMonth() + m, 1);
+  const today0 = todayMidnight();
+  const v = calView[aptId];
+
+  for (let m = 0; m < 2; m++) {   // показываем 2 месяца за раз
+    const base = new Date(v.year, v.month + m, 1);
     const year = base.getFullYear(), month = base.getMonth();
     const startDow = (base.getDay() + 6) % 7;
     const days = new Date(year, month + 1, 0).getDate();
@@ -439,6 +497,12 @@ function drawMonths(aptId) {
       <div class="cal-grid">${DOW.map(d=>`<div class="cal-dow">${d}</div>`).join("")}${cells}</div>`;
     host.appendChild(block);
   }
+
+  // заголовок диапазона месяцев
+  const m2 = new Date(v.year, v.month + 1, 1);
+  document.getElementById("caltitle-" + aptId).textContent =
+    `${MONTHS[v.month]} ${v.year} — ${MONTHS[m2.getMonth()]} ${m2.getFullYear()}`;
+
   host.querySelectorAll("[data-key]").forEach(cell => {
     cell.addEventListener("click", () => {
       const set = busyMap[cell.dataset.apt];
@@ -447,6 +511,26 @@ function drawMonths(aptId) {
       else { set.add(key); cell.classList.remove("free"); cell.classList.add("busy"); }
     });
   });
+}
+
+/* Отметить/освободить диапазон дат «с … по …» */
+function markRange(aptId, busy) {
+  const fromEl = document.getElementById("from-" + aptId);
+  const toEl = document.getElementById("to-" + aptId);
+  let from = fromEl.value, to = toEl.value || fromEl.value;
+  if (!from) { setStatus("Укажите дату «с»", "err", 4000); return; }
+  if (to < from) { const t = from; from = to; to = t; }
+  const set = busyMap[aptId];
+  let cur = new Date(from + "T00:00:00"), end = new Date(to + "T00:00:00");
+  let cnt = 0;
+  while (cur <= end) {
+    const key = fmt(cur);
+    if (busy) set.add(key); else set.delete(key);
+    cnt++; cur.setDate(cur.getDate() + 1);
+  }
+  drawMonths(aptId);
+  fromEl.value = ""; toEl.value = "";
+  setStatus(`${busy ? "Занято" : "Освобождено"}: ${cnt} дн. Не забудьте «Сохранить занятость»`, "ok", 5000);
 }
 
 async function saveAvailability() {

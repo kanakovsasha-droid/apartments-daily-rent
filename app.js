@@ -160,23 +160,49 @@ async function renderApartments() {
   });
 }
 
+const GALLERY_INTERVAL = 4500; // мс между автоматическими слайдами
+
 function initGallery(card, apt) {
   const gallery = card.querySelector(".apt-gallery");
   const main = card.querySelector(".apt-gallery-main");
   const dots = card.querySelectorAll(".gallery-dots span");
+  const n = apt.photos.length;
+
   const show = (i) => {
     gallery.dataset.index = i;
     main.innerHTML = `<img src="${escapeHtml(apt.photos[i])}" alt="${escapeHtml(apt.title)}">`;
     dots.forEach((d, di) => d.classList.toggle("active", di === i));
   };
-  card.querySelector(".gallery-prev").addEventListener("click", () => {
-    const i = (+gallery.dataset.index - 1 + apt.photos.length) % apt.photos.length;
-    show(i);
-  });
-  card.querySelector(".gallery-next").addEventListener("click", () => {
-    const i = (+gallery.dataset.index + 1) % apt.photos.length;
-    show(i);
-  });
+  const go = (delta) => show((+gallery.dataset.index + delta + n) % n);
+
+  // автолистание
+  let timer = null;
+  const start = () => { timer = setInterval(() => go(1), GALLERY_INTERVAL); };
+  const stop = () => { clearInterval(timer); timer = null; };
+  const restart = () => { stop(); start(); };
+
+  card.querySelector(".gallery-prev").addEventListener("click", () => { go(-1); restart(); });
+  card.querySelector(".gallery-next").addEventListener("click", () => { go(1); restart(); });
+
+  // клик по точкам
+  dots.forEach((d, di) => d.addEventListener("click", () => { show(di); restart(); }));
+
+  // пауза при наведении мышью (десктоп)
+  gallery.addEventListener("mouseenter", stop);
+  gallery.addEventListener("mouseleave", start);
+
+  // свайп пальцем (телефон)
+  let touchX = null;
+  gallery.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; stop(); }, { passive: true });
+  gallery.addEventListener("touchend", (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX = null;
+    restart();
+  }, { passive: true });
+
+  start();
 }
 
 /* =========================================================================
