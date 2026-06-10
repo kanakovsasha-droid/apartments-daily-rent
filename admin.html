@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Админ-панель — Уютные квартиры</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: var(--bg-soft); }
+    .admin-wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+    .admin-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .admin-top h1 { font-size: 22px; margin: 0; }
+    .admin-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px; }
+    .admin-card h2 { font-size: 17px; margin: 0 0 14px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .field input, .field textarea {
+      width: 100%; padding: 11px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font: inherit; color: var(--text); background: var(--bg); }
+    .field textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+    .hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row .field { flex: 1; min-width: 160px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+    .tab { padding: 10px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-weight: 600; font-size: 14px; }
+    .tab.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .hidden { display: none !important; }
+    /* логин */
+    .login-box { max-width: 360px; margin: 12vh auto 0; }
+    .login-box .admin-card { padding: 28px; }
+    .center { text-align: center; }
+    /* календарь */
+    .cal-aptname { font-weight: 700; margin: 0 0 4px; }
+    .cal-months { display: flex; gap: 18px; flex-wrap: wrap; }
+    .cal-block { flex: 1; min-width: 240px; }
+    .cal-mtitle { font-weight: 700; font-size: 14px; margin: 6px 0 8px; text-align: center; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-dow { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; padding: 2px 0; }
+    .cal-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); user-select: none; }
+    .cal-cell.empty { border: none; cursor: default; }
+    .cal-cell.past { color: #c2c9d2; background: var(--bg-soft); cursor: default; border-color: transparent; }
+    .cal-cell.free { background: #eaf6f1; color: var(--brand-dark); }
+    .cal-cell.busy { background: #fbe4e4; color: #b23b3b; font-weight: 700; }
+    .cal-legend { font-size: 12px; color: var(--text-muted); margin-top: 10px; display: flex; gap: 16px; }
+    .cal-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+    .lg-free { background: #eaf6f1; } .lg-busy { background: #fbe4e4; }
+    /* статус */
+    #status { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120%);
+      background: var(--text); color: #fff; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600;
+      box-shadow: var(--shadow-lg); transition: transform .25s ease; z-index: 50; max-width: 90vw; }
+    #status.show { transform: translateX(-50%) translateY(0); }
+    #status.err { background: #b23b3b; }
+    #status.ok { background: var(--brand); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    code.kbd { background: var(--bg-soft-2); padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <!-- ЭКРАН ЛОГИНА -->
+  <div id="loginScreen" class="login-box">
+    <div class="admin-card">
+      <h2 class="center">🔐 Вход в панель</h2>
+      <div class="field">
+        <label>Логин</label>
+        <input id="loginUser" type="text" autocomplete="username" placeholder="логин">
+      </div>
+      <div class="field">
+        <label>Пароль</label>
+        <input id="loginPass" type="password" autocomplete="current-password" placeholder="пароль">
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Войти</button>
+      <p id="loginErr" class="hint center" style="color:#b23b3b; min-height:16px; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
+  <div id="app" class="admin-wrap hidden">
+    <div class="admin-top">
+      <h1>Панель управления</h1>
+      <button class="btn btn-ghost" onclick="logout()">Выйти</button>
+    </div>
+
+    <!-- НАСТРОЙКА ТОКЕНА -->
+    <div id="tokenCard" class="admin-card hidden">
+      <h2>🔑 Подключение к сайту</h2>
+      <p class="hint" style="margin-top:0">
+        Чтобы изменения сохранялись на сайте, нужен ключ доступа GitHub. Вставьте его один раз —
+        он сохранится в этом браузере и больше спрашиваться не будет.
+      </p>
+      <div class="field">
+        <label>Ключ доступа (token)</label>
+        <input id="tokenInput" type="password" placeholder="github_pat_...">
+        <p class="hint">Где взять — спросите у Саши. Ключ хранится только на этом устройстве.</p>
+      </div>
+      <button class="btn btn-primary" onclick="saveToken()">Сохранить ключ</button>
+    </div>
+
+    <div id="mainUI" class="hidden">
+      <div class="tabs">
+        <button class="tab active" data-tab="apts" onclick="switchTab('apts')">🏠 Квартиры и цены</button>
+        <button class="tab" data-tab="busy" onclick="switchTab('busy')">📅 Занятость</button>
+      </div>
+
+      <!-- ВКЛАДКА: КВАРТИРЫ -->
+      <div id="tab-apts">
+        <div id="aptsForms"></div>
+        <button class="btn btn-primary btn-lg" onclick="saveApartments()">💾 Сохранить квартиры и цены</button>
+      </div>
+
+      <!-- ВКЛАДКА: ЗАНЯТОСТЬ -->
+      <div id="tab-busy" class="hidden">
+        <div class="admin-card">
+          <p class="hint" style="margin-top:0">
+            Нажимайте на дни, чтобы переключать <b style="color:#b23b3b">занято</b> ⇄ <b style="color:var(--brand-dark)">свободно</b>.
+            Прошедшие даты менять нельзя.
+          </p>
+          <div class="cal-legend">
+            <span><i class="lg-free"></i>Свободно</span>
+            <span><i class="lg-busy"></i>Занято</span>
+          </div>
+        </div>
+        <div id="busyForms"></div>
+        <button class="btn btn-primary btn-lg" onclick="saveAvailability()">💾 Сохранить занятость</button>
+      </div>
+
+      <div style="margin-top:14px">
+        <button class="btn btn-ghost" onclick="changeToken()">Сменить ключ доступа</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+<script>
+/* ===================== КОНФИГ ===================== */
+const ADMIN_USER = "oxana2101";
+const ADMIN_PASS = "21012006";
+const REPO_OWNER = "kanakovsasha-droid";
+const REPO_NAME  = "apartments-daily-rent";
+const BRANCH     = "main";
+const FILE_APTS  = "data/apartments.json";
+const FILE_BUSY  = "data/availability.json";
+
+/* ===================== СОСТОЯНИЕ ===================== */
+let apartments = [];        // массив квартир
+let busyMap = {};           // { aptId: Set("YYYY-MM-DD") }
+let shaApts = null, shaBusy = null;
+
+/* ===================== ЛОГИН ===================== */
+function doLogin() {
+  const u = document.getElementById("loginUser").value.trim();
+  const p = document.getElementById("loginPass").value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    sessionStorage.setItem("admin_ok", "1");
+    showApp();
+  } else {
+    document.getElementById("loginErr").textContent = "Неверный логин или пароль";
+  }
+}
+function logout() {
+  sessionStorage.removeItem("admin_ok");
+  location.reload();
+}
+function getToken() { return localStorage.getItem("gh_token") || ""; }
+function saveToken() {
+  const t = document.getElementById("tokenInput").value.trim();
+  if (!t) { setStatus("Введите ключ", "err"); return; }
+  localStorage.setItem("gh_token", t);
+  document.getElementById("tokenCard").classList.add("hidden");
+  document.getElementById("mainUI").classList.remove("hidden");
+  loadData();
+}
+function changeToken() {
+  document.getElementById("mainUI").classList.add("hidden");
+  document.getElementById("tokenInput").value = getToken();
+  document.getElementById("tokenCard").classList.remove("hidden");
+}
+
+function showApp() {
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  if (!getToken()) {
+    document.getElementById("tokenCard").classList.remove("hidden");
+  } else {
+    document.getElementById("mainUI").classList.remove("hidden");
+    loadData();
+  }
+}
+
+/* ===================== GITHUB API ===================== */
+function b64encode(str) { return btoa(unescape(encodeURIComponent(str))); }
+function b64decode(b64) { return decodeURIComponent(escape(atob(b64.replace(/\s/g, "")))); }
+
+async function ghGet(path) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+  const res = await fetch(url, {
+    headers: { "Authorization": "Bearer " + getToken(), "Accept": "application/vnd.github+json" },
+    cache: "no-store"
+  });
+  if (!res.ok) throw new Error("GET " + path + " → " + res.status);
+  const data = await res.json();
+  return { json: JSON.parse(b64decode(data.content)), sha: data.sha };
+}
+
+async function ghPut(path, obj, sha, message) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const body = {
+    message,
+    content: b64encode(JSON.stringify(obj, null, 2) + "\n"),
+    branch: BRANCH
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: { "Authorization": "Bearer " + getToken(), "Accept": "application/vnd.github+json" },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error("PUT " + path + " → " + res.status + " " + t.slice(0, 120));
+  }
+  const data = await res.json();
+  return data.content.sha;
+}
+
+/* ===================== ЗАГРУЗКА ДАННЫХ ===================== */
+async function loadData() {
+  setStatus("Загружаю данные…");
+  try {
+    const a = await ghGet(FILE_APTS);
+    apartments = a.json; shaApts = a.sha;
+    const b = await ghGet(FILE_BUSY);
+    shaBusy = b.sha;
+    busyMap = {};
+    for (const apt of apartments) busyMap[apt.id] = expandBusy(b.json[apt.id] || []);
+    renderApts();
+    renderBusy();
+    clearStatus();
+  } catch (e) {
+    setStatus("Ошибка загрузки: " + e.message, "err", 8000);
+  }
+}
+
+/* Разворачивает массив (строки + диапазоны) в Set строк YYYY-MM-DD */
+function expandBusy(arr) {
+  const set = new Set();
+  for (const item of arr) {
+    if (typeof item === "string") set.add(item);
+    else if (item && item.from && item.to) {
+      let cur = new Date(item.from + "T00:00:00"), end = new Date(item.to + "T00:00:00");
+      while (cur <= end) { set.add(fmt(cur)); cur.setDate(cur.getDate() + 1); }
+    }
+  }
+  return set;
+}
+
+/* ===================== ФОРМЫ КВАРТИР ===================== */
+function renderApts() {
+  const box = document.getElementById("aptsForms");
+  box.innerHTML = "";
+  apartments.forEach((apt, idx) => {
+    const card = document.createElement("div");
+    card.className = "admin-card";
+    card.innerHTML = `
+      <h2>${escapeHtml(apt.title)}</h2>
+      <div class="field">
+        <label>Название</label>
+        <input data-idx="${idx}" data-f="title" value="${escapeHtml(apt.title)}">
+      </div>
+      <div class="field" style="max-width:220px">
+        <label>Цена за сутки, ₽</label>
+        <input data-idx="${idx}" data-f="pricePerNight" type="number" min="0" value="${apt.pricePerNight}">
+      </div>
+      <div class="field">
+        <label>Описание</label>
+        <textarea data-idx="${idx}" data-f="description">${escapeHtml(apt.description)}</textarea>
+      </div>
+      <div class="field">
+        <label>Удобства (через запятую)</label>
+        <input data-idx="${idx}" data-f="amenities" value="${escapeHtml(apt.amenities.join(", "))}">
+      </div>
+      <p class="hint">📸 Фото: ${apt.photos.length} шт. (управляются через файлы, не здесь)</p>
+    `;
+    box.appendChild(card);
+  });
+}
+
+function collectApts() {
+  document.querySelectorAll("#aptsForms [data-idx]").forEach(el => {
+    const apt = apartments[+el.dataset.idx];
+    const f = el.dataset.f;
+    if (f === "pricePerNight") apt[f] = parseInt(el.value, 10) || 0;
+    else if (f === "amenities") apt[f] = el.value.split(",").map(s => s.trim()).filter(Boolean);
+    else apt[f] = el.value;
+  });
+}
+
+async function saveApartments() {
+  collectApts();
+  setStatus("Сохраняю…");
+  try {
+    shaApts = await ghPut(FILE_APTS, apartments, shaApts, "admin: обновление квартир и цен");
+    setStatus("Сохранено ✓ Сайт обновится за 1–2 минуты", "ok", 6000);
+  } catch (e) {
+    setStatus("Ошибка: " + e.message, "err", 8000);
+  }
+}
+
+/* ===================== КАЛЕНДАРЬ ЗАНЯТОСТИ ===================== */
+const MONTHS = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+function pad(n){ return String(n).padStart(2,"0"); }
+function fmt(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+
+function renderBusy() {
+  const box = document.getElementById("busyForms");
+  box.innerHTML = "";
+  apartments.forEach(apt => {
+    const card = document.createElement("div");
+    card.className = "admin-card";
+    card.innerHTML = `<p class="cal-aptname">${escapeHtml(apt.title)}</p><div class="cal-months" id="cal-${apt.id}"></div>`;
+    box.appendChild(card);
+    drawMonths(apt.id);
+  });
+}
+
+function drawMonths(aptId) {
+  const host = document.getElementById("cal-" + aptId);
+  host.innerHTML = "";
+  const now = new Date();
+  const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  for (let m = 0; m < 3; m++) {
+    const base = new Date(now.getFullYear(), now.getMonth() + m, 1);
+    const year = base.getFullYear(), month = base.getMonth();
+    const startDow = (base.getDay() + 6) % 7;
+    const days = new Date(year, month + 1, 0).getDate();
+    let cells = "";
+    for (let i = 0; i < startDow; i++) cells += `<div class="cal-cell empty"></div>`;
+    for (let d = 1; d <= days; d++) {
+      const cd = new Date(year, month, d);
+      const key = fmt(cd);
+      let cls = "cal-cell ";
+      if (cd < today0) cls += "past";
+      else cls += busyMap[aptId].has(key) ? "busy" : "free";
+      const clickable = cd >= today0;
+      cells += `<div class="${cls}" ${clickable ? `data-apt="${aptId}" data-key="${key}"` : ""}>${d}</div>`;
+    }
+    const block = document.createElement("div");
+    block.className = "cal-block";
+    block.innerHTML = `
+      <div class="cal-mtitle">${MONTHS[month]} ${year}</div>
+      <div class="cal-grid">${DOW.map(d=>`<div class="cal-dow">${d}</div>`).join("")}${cells}</div>`;
+    host.appendChild(block);
+  }
+  host.querySelectorAll("[data-key]").forEach(cell => {
+    cell.addEventListener("click", () => {
+      const set = busyMap[cell.dataset.apt];
+      const key = cell.dataset.key;
+      if (set.has(key)) { set.delete(key); cell.classList.remove("busy"); cell.classList.add("free"); }
+      else { set.add(key); cell.classList.remove("free"); cell.classList.add("busy"); }
+    });
+  });
+}
+
+async function saveAvailability() {
+  const out = {};
+  for (const apt of apartments) out[apt.id] = [...busyMap[apt.id]].sort();
+  setStatus("Сохраняю…");
+  try {
+    shaBusy = await ghPut(FILE_BUSY, out, shaBusy, "admin: обновление занятости");
+    setStatus("Сохранено ✓ Сайт обновится за 1–2 минуты", "ok", 6000);
+  } catch (e) {
+    setStatus("Ошибка: " + e.message, "err", 8000);
+  }
+}
+
+/* ===================== UI УТИЛИТЫ ===================== */
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  document.getElementById("tab-apts").classList.toggle("hidden", tab !== "apts");
+  document.getElementById("tab-busy").classList.toggle("hidden", tab !== "busy");
+}
+let statusTimer = null;
+function setStatus(msg, kind, ms) {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = "show" + (kind ? " " + kind : "");
+  clearTimeout(statusTimer);
+  if (ms) statusTimer = setTimeout(clearStatus, ms);
+}
+function clearStatus() { document.getElementById("status").className = ""; }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ===================== СТАРТ ===================== */
+document.getElementById("loginPass").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+if (sessionStorage.getItem("admin_ok") === "1") showApp();
+</script>
+</body>
+</html>
