@@ -100,6 +100,13 @@ function formatPrice(n) {
   return n.toLocaleString("ru-RU") + " ₽";
 }
 
+/* Разметка кадра галереи: размытый фон + фото целиком (без обрезки) */
+function photoFrame(src, alt) {
+  const s = escapeHtml(src);
+  return `<div class="frame-blur" style="background-image:url('${s}')"></div>` +
+         `<img class="frame-img" src="${s}" alt="${escapeHtml(alt)}">`;
+}
+
 async function renderApartments() {
   const res = await fetch("data/apartments.json");
   const apartments = await res.json();
@@ -117,7 +124,7 @@ async function renderApartments() {
     card.innerHTML = `
       <div class="apt-gallery" data-index="0">
         <div class="apt-gallery-main">${hasPhotos
-          ? `<img src="${escapeHtml(apt.photos[0])}" alt="${escapeHtml(apt.title)}">`
+          ? photoFrame(apt.photos[0], apt.title)
           : "Фото скоро добавим"}</div>
         ${hasPhotos && apt.photos.length > 1 ? `
           <button class="gallery-nav gallery-prev" aria-label="Назад">‹</button>
@@ -170,7 +177,7 @@ function initGallery(card, apt) {
 
   const show = (i) => {
     gallery.dataset.index = i;
-    main.innerHTML = `<img src="${escapeHtml(apt.photos[i])}" alt="${escapeHtml(apt.title)}">`;
+    main.innerHTML = photoFrame(apt.photos[i], apt.title);
     dots.forEach((d, di) => d.classList.toggle("active", di === i));
   };
   const go = (delta) => show((+gallery.dataset.index + delta + n) % n);

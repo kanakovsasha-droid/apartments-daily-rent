@@ -196,9 +196,10 @@ section { scroll-margin-top: 72px; }
 /* Галерея */
 .apt-gallery { position: relative; background: var(--bg-soft-2); }
 .apt-gallery-main {
+  position: relative;
   aspect-ratio: 16 / 10;
   width: 100%;
-  object-fit: cover;
+  overflow: hidden;
   background: linear-gradient(135deg, #dfe6ec, #eef1f5);
   display: flex;
   align-items: center;
@@ -207,7 +208,23 @@ section { scroll-margin-top: 72px; }
   font-size: 15px;
   font-weight: 500;
 }
-.apt-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+/* размытая заливка фона из той же картинки */
+.frame-blur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px) brightness(0.92);
+  transform: scale(1.18);
+}
+/* само фото — целиком, без обрезки */
+.frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 .gallery-nav {
   position: absolute;
   top: 50%;
