@@ -13,6 +13,11 @@
     .admin-top h1 { font-size: 22px; margin: 0; }
     .admin-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 18px; }
     .admin-card h2 { font-size: 17px; margin: 0 0 14px; }
+    .apt-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .apt-card-head h2 { margin: 0; }
+    .apt-move { display: flex; gap: 6px; flex-shrink: 0; }
+    .apt-move .cal-arrow { width: 32px; height: 32px; font-size: 16px; }
+    .cal-arrow:disabled { opacity: .35; cursor: default; }
     .field { margin-bottom: 14px; }
     .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
     .field input, .field textarea {
@@ -303,14 +308,27 @@ function renderApts() {
     const card = document.createElement("div");
     card.className = "admin-card";
     card.innerHTML = `
-      <h2>${escapeHtml(apt.title)}</h2>
+      <div class="apt-card-head">
+        <h2>${escapeHtml(apt.title)}</h2>
+        <div class="apt-move">
+          <button class="cal-arrow" title="Выше" ${idx === 0 ? "disabled" : ""} onclick="moveApt(${idx}, -1)">↑</button>
+          <button class="cal-arrow" title="Ниже" ${idx === apartments.length - 1 ? "disabled" : ""} onclick="moveApt(${idx}, 1)">↓</button>
+        </div>
+      </div>
       <div class="field">
         <label>Название</label>
         <input data-idx="${idx}" data-f="title" value="${escapeHtml(apt.title)}">
       </div>
-      <div class="field" style="max-width:220px">
-        <label>Цена за сутки, ₽</label>
-        <input data-idx="${idx}" data-f="pricePerNight" type="number" min="0" value="${apt.pricePerNight}">
+      <div class="row">
+        <div class="field" style="max-width:200px">
+          <label>Цена за сутки, ₽</label>
+          <input data-idx="${idx}" data-f="pricePerNight" type="number" min="0" value="${apt.pricePerNight}">
+        </div>
+        <div class="field" style="max-width:200px">
+          <label>«Старая» цена (для скидки)</label>
+          <input data-idx="${idx}" data-f="oldPrice" type="number" min="0" placeholder="напр. 4000" value="${apt.oldPrice || ""}">
+          <p class="hint">Зачёркивается на сайте + бейдж «−%». Пусто = без скидки.</p>
+        </div>
       </div>
       <div class="field">
         <label>Описание</label>
@@ -404,9 +422,22 @@ function collectApts() {
     const apt = apartments[+el.dataset.idx];
     const f = el.dataset.f;
     if (f === "pricePerNight") apt[f] = parseInt(el.value, 10) || 0;
+    else if (f === "oldPrice") {
+      const v = parseInt(el.value, 10);
+      if (v > 0) apt.oldPrice = v; else delete apt.oldPrice;
+    }
     else if (f === "amenities") apt[f] = el.value.split(",").map(s => s.trim()).filter(Boolean);
     else apt[f] = el.value;
   });
+}
+
+/* Поменять квартиры местами (порядок на сайте) */
+function moveApt(idx, dir) {
+  collectApts();   // сохранить текущие правки из полей перед перерисовкой
+  const j = idx + dir;
+  if (j < 0 || j >= apartments.length) return;
+  [apartments[idx], apartments[j]] = [apartments[j], apartments[idx]];
+  renderApts();
 }
 
 async function saveApartments() {

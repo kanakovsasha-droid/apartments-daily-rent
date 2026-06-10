@@ -100,6 +100,18 @@ function formatPrice(n) {
   return n.toLocaleString("ru-RU") + " ₽";
 }
 
+/* Блок цены: со «старой» зачёркнутой ценой и бейджем скидки, если задан oldPrice */
+function priceBlock(apt) {
+  const price = apt.pricePerNight;
+  const old = apt.oldPrice;
+  if (old && old > price) {
+    const pct = Math.round((1 - price / old) * 100);
+    return `<span class="price-old">${formatPrice(old)}</span>${formatPrice(price)}<small> / сутки</small>` +
+           `<span class="price-badge">−${pct}%</span>`;
+  }
+  return `${formatPrice(price)}<small> / сутки</small>`;
+}
+
 /* Разметка кадра галереи: размытый фон + фото целиком (без обрезки) */
 function photoFrame(src, alt) {
   const s = escapeHtml(src);
@@ -135,7 +147,7 @@ async function renderApartments() {
       <div class="apt-body">
         <div class="apt-head">
           <h3 class="apt-title">${escapeHtml(apt.title)}</h3>
-          <div class="apt-price">${formatPrice(apt.pricePerNight)}<small> / сутки</small></div>
+          <div class="apt-price">${priceBlock(apt)}</div>
         </div>
         <p class="apt-desc">${escapeHtml(apt.description)}</p>
         <div class="apt-amenities">${amenities}</div>
