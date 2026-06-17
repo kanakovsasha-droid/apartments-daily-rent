@@ -201,14 +201,14 @@ function doLogin() {
   const u = document.getElementById("loginUser").value.trim();
   const p = document.getElementById("loginPass").value;
   if (u === ADMIN_USER && p === ADMIN_PASS) {
-    sessionStorage.setItem("admin_ok", "1");
+    localStorage.setItem("admin_ok", "1");
     showApp();
   } else {
     document.getElementById("loginErr").textContent = "Неверный логин или пароль";
   }
 }
 function logout() {
-  sessionStorage.removeItem("admin_ok");
+  localStorage.removeItem("admin_ok");
   location.reload();
 }
 function getToken() { return localStorage.getItem("gh_token") || ""; }
@@ -599,7 +599,7 @@ function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt
 
 /* ===================== СТАРТ ===================== */
 document.getElementById("loginPass").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
-if (sessionStorage.getItem("admin_ok") === "1") showApp();
+if (localStorage.getItem("admin_ok") === "1") showApp();
 </script>
 </body>
 </html>
